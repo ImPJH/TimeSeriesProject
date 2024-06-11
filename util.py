@@ -48,7 +48,7 @@ def NSHP_get_g_points(size):
         points[j + 3 * size, 0] = size - j
     return points
 
-# y 범위를 벗어나는 지점은 어떻게 할 것인가? white noise?
+# y 범위를 벗어나는 지점은 어떻게 할 것인가? -> zero padding
 # rho(y-a , y-b)
 # sigma
 def get_rho(y,j,k):
