@@ -80,3 +80,6 @@ def rho_jkn(y,j,k,n,ROS):
             result[0][i] = get_rho(y,j-points[i][0],k-points[i][1])
         result = np.array(result)
     return result
+
+def get_sigma_00(y):
+    return np.std(y)
