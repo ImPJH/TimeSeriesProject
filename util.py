@@ -7,20 +7,25 @@ def get_R(y,size,ROS):
         NSHP_get_R(y,size,R)
     return R
 
+# TODO get R
 def NSHP_get_R(y,size,R):
+    points = NSHP_get_g_points(size)
     for i in range(size+1):
         for j in range(size+1):
             if i == 0 and j == 0:
-                R[(i,j)] = np.zeros((1,1))
+                R[(i,j)] = np.ones((1,1))
             elif i == 0:
-                R[(i,j)] = np.zeros((1,4*j))
+                R[(i,j)] = rho_jkn(y,0,0,j)
             elif j == 0:
                 R[(i,j)] = np.zeros((4*i,1))
+                for ii in range(i):
+                    R[(i,j)][ii][0] = rho_jkn(y,points[ii,0],points[ii,1],0)
             else:
-                R[(i,j)] = np.zeros((4*i,4*j))
-            
-            for ii in range(R[(i,j)].shape[0]):
-                for jj in range(R[(i,j)].shape[1]):
+                R[(i,j)] = np.zeros((4*i,1))
+                for ii in range(i):
+                    R[(i,j)][ii][0] = rho_jkn(y,points[ii,0],points[ii,1],j)
+                R[(i,j)] = np.array(R[(i,j)])
+
 
 
 def NSHP_get_G_points(size):
@@ -45,15 +50,33 @@ def NSHP_get_g_points(size):
 
 # y 범위를 벗어나는 지점은 어떻게 할 것인가? white noise?
 # rho(y-a , y-b)
-def get_rho(y,a,b):
+# sigma
+def get_rho(y,j,k):
+    sample1 = y
+    sample2 = list()
+    for row in range(y.size(0)):
+        tmp_row = list()
+        for col in range(y.size(1)):
+            if row+j <y.size(0) and col+k <y.size(1):
+                tmp_row.append(y[row+j][col+k])
+            else:
+                tmp_row.append(0)
+        sample2.append(tmp_row)
     
-    while(True):
-        
+    mean1 = np.mean(sample1)
+    mean2 = np.mean(sample2)
+    return np.mean((sample1-mean1)*(sample2-mean2))
 
 def rho_jkn(y,j,k,n,ROS):
-    if ROS == 'NSHP': point = NSHP_get_g_points(n)
+    if n == 0:
+        result = np.array(get_rho(y,j,k))
+    else:
+        if ROS == 'NSHP':
+            points = NSHP_get_g_points(n)
 
-    g_size = point.shape[0]
-    result = np.zeros((1,g_size))
-    for i in range(g_size):
-        result[i] = get_rho(y,i,j,k,ROS)
+        g_size = points.shape[0]
+        result = np.zeros((1,g_size))
+        for i in range(g_size):
+            result[0][i] = get_rho(y,j-points[i][0],k-points[i][1])
+        result = np.array(result)
+    return result
