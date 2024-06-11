@@ -15,16 +15,17 @@ def NSHP_get_R(y,size,R):
             if i == 0 and j == 0:
                 R[(i,j)] = np.ones((1,1))
             elif i == 0:
-                R[(i,j)] = rho_jkn(y,0,0,j)
+                R[(i,j)] = rho_jkn(y,0,0,j,'NSHP')
             elif j == 0:
                 R[(i,j)] = np.zeros((4*i,1))
-                for ii in range(i):
-                    R[(i,j)][ii][0] = rho_jkn(y,points[ii,0],points[ii,1],0)
+                for ii in range(4*i):
+                    R[(i,j)][ii] = rho_jkn(y,points[ii,0],points[ii,1],0,'NSHP')
             else:
-                R[(i,j)] = np.zeros((4*i,1))
-                for ii in range(i):
-                    R[(i,j)][ii][0] = rho_jkn(y,points[ii,0],points[ii,1],j)
+                R[(i,j)] = np.zeros((4*i,4*j))
+                for ii in range(4*i):
+                    R[(i,j)][ii] = rho_jkn(y,points[ii,0],points[ii,1],j,'NSHP')
                 R[(i,j)] = np.array(R[(i,j)])
+    print("get_R done!")
 
 
 
@@ -46,7 +47,7 @@ def NSHP_get_g_points(size):
         points[j + size, 1] = size - j
         points[j + 2 * size, 1] = -j
         points[j + 3 * size, 0] = size - j
-    return points
+    return points.astype(int)
 
 # y 범위를 벗어나는 지점은 어떻게 할 것인가? -> zero padding
 # rho(y-a , y-b)
@@ -54,10 +55,10 @@ def NSHP_get_g_points(size):
 def get_rho(y,j,k):
     sample1 = y
     sample2 = list()
-    for row in range(y.size(0)):
+    for row in range(y.shape[0]):
         tmp_row = list()
-        for col in range(y.size(1)):
-            if row+j <y.size(0) and col+k <y.size(1):
+        for col in range(y.shape[1]):
+            if row+j <y.shape[0] and col+k <y.shape[1]:
                 tmp_row.append(y[row+j][col+k])
             else:
                 tmp_row.append(0)
