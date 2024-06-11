@@ -66,7 +66,7 @@ def get_rho(y,j,k):
     
     mean1 = np.mean(sample1)
     mean2 = np.mean(sample2)
-    return np.mean((sample1-mean1)*(sample2-mean2))
+    return np.mean((sample1-mean1)*(sample2-mean2)) / get_sigma_00(y)
 
 def rho_jkn(y,j,k,n,ROS):
     if n == 0:
