@@ -99,7 +99,7 @@ class CalBeta():
         return result
 
     def get_sigma_00(self):
-        return np.std(self.y)
+        return np.std(self.y)**2
     
     def reset(self):
         self.rho_jkn_dict = dict()
