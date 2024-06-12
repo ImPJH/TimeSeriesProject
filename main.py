@@ -1,11 +1,11 @@
 import argparse
-import util
 import numpy as np
 import matplotlib.pyplot as plt
 from CausalAr import AR_2D
+from util import CalBeta
 
 def test(y):
-    size = 8
+    size = 16
     sample = np.random.rand(size*2,size*2) * 255
     # fig = plt.figure()
     # ax = fig.add_subplot(111,projection='3d')
@@ -13,8 +13,9 @@ def test(y):
     # plt.savefig('random_sample.jpg')
     # plt.close()
     # print(sample)
-    sigma_00 = util.get_sigma_00(sample)
-    R = util.get_R(sample,size,'NSHP')   
+    BetaCalculator = CalBeta(sample,size,ROS='NSHP')
+    sigma_00 = BetaCalculator.get_sigma_00()
+    R = BetaCalculator.get_R()   
     ar_2d_model = AR_2D(R,size,sigma_00)
     (beta, Ssigma) = ar_2d_model.run()
     print(beta)
