@@ -74,8 +74,8 @@ class CalBeta():
             for row in range(self.y.shape[0]):
                 tmp_row = list()
                 for col in range(self.y.shape[1]):
-                    if row+j <self.y.shape[0] and col+k <self.y.shape[1]:
-                        tmp_row.append(self.y[row+j][col+k])
+                    if row+k <self.y.shape[0] and col+j <self.y.shape[1]:
+                        tmp_row.append(self.y[row+k][col+j])
                     else:
                         tmp_row.append(0)
                 sample2.append(tmp_row)

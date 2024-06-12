@@ -87,7 +87,7 @@ class AR_2D:
     def plot_AIC_BIC(self, sample):
         print('Ssigma: ', self.Ssigma)
         # ssigma_ = self.Ssigma[:-1].copy()
-        ssigma_ = np.power(self.Ssigma[:-1].copy() , 2)
+        ssigma_ = self.Ssigma[:-1].copy()
         row, col = sample.shape
         S_m = 2* self.size **2 + 2*self.size
         aic = np.log(ssigma_) + 2 / (row*col) * (S_m + 1) # Log e
