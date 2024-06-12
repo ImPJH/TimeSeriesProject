@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # TODO: R을 구하는 코드가 필요
 # Todo2: debugging이 필요
@@ -82,3 +83,30 @@ class AR_2D:
                     )
 
         return (self.beta, self.Ssigma)
+
+    def plot_AIC_BIC(self, sample):
+        print('Ssigma: ', self.Ssigma)
+        # ssigma_ = self.Ssigma[:-1].copy()
+        ssigma_ = np.power(self.Ssigma[:-1].copy() , 2)
+        row, col = sample.shape
+        S_m = 2* self.size **2 + 2*self.size
+        aic = np.log(ssigma_) + 2 / (row*col) * (S_m + 1) # Log e
+        bic = np.log(ssigma_) + np.log(row*col) / (row*col) * (S_m + 1) # Log e
+        
+        x_ = np.arange(len(aic)) + 1
+        
+        plt.figure(figsize=(10,6))
+        plt.plot(x_, aic, 'o-', label='AIC')
+        plt.plot(x_, bic, 'v-', label='BIC')
+        plt.xticks(range(x_[0], x_[-1] + 1))
+        plt.xlabel('m')
+        plt.ylabel('AIC/BIC value')
+        plt.title('AIC/BIC TEST')
+        plt.legend()
+        plt.plot()
+
+
+
+
+
+

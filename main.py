@@ -1,13 +1,20 @@
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from CausalAr import AR_2D
 from util import CalBeta
 from Findb import Findb
 
 def test(y):
+    # Read residual_2.csv
+    df2 = pd.read_csv('source/residual_2.csv', header=None)
+    sample = df2.values
+    print('residual shape', sample.shape)
+
     size = 16
-    sample = np.random.rand(size*2,size*2)
+    # sample = np.random.rand(size*2,size*2) * 255
+
     # fig = plt.figure()
     # ax = fig.add_subplot(111,projection='3d')
     # ax.scatter(np.arange(128),np.arange(128),sample)
@@ -19,12 +26,11 @@ def test(y):
     R = BetaCalculator.get_R()   
     ar_2d_model = AR_2D(R,size,sigma_00)
     (beta, Ssigma) = ar_2d_model.run()
-    print(beta)
-    print(Ssigma)
+    print('BETA \n', beta)
 
-
-    
-    
+    # plot AIC, BIC
+    ar_2d_model.plot_AIC_BIC(sample)
+    plt.show()
 
 
 if __name__ == '__main__':
