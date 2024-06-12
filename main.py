@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from CausalAr import AR_2D
 from util import CalBeta
+from Findb import Findb
 
 def test(y):
     # Read residual_2.csv
