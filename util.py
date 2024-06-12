@@ -37,7 +37,6 @@ class CalBeta():
 
     def NSHP_get_G_points(self):
         points = dict()
-        points[0] = np.zeors((1,2))
         for i in range(1, self.size + 1):
             points[i] = self.NSHP_get_g_points(i)
         return points
@@ -45,6 +44,8 @@ class CalBeta():
     def NSHP_get_g_points(self,s):
         if s in self.g_points_dict.keys():
             return self.g_points_dict[s]
+        elif s==0:
+            self.g_points_dict[s] = [[0,0]]
         else:
             points = np.empty((4 * s, 2))
             points[:s, 1] = s
@@ -81,6 +82,15 @@ class CalBeta():
             
             mean1 = np.mean(sample1)
             mean2 = np.mean(sample2)
+
+            # print(f"j:{j}, k:{k}")
+            # print("sample1")
+            # for row in sample1:
+            #     print(row)
+            # print("sample2")
+            # for row in sample2:
+            #     print(row)
+            # print()
             self.rho_dict[(j,k)] = np.mean((sample1-mean1)*(sample2-mean2)) / self.sigma_00
             return np.mean((sample1-mean1)*(sample2-mean2)) / self.sigma_00
 
@@ -99,7 +109,7 @@ class CalBeta():
         return result
 
     def get_sigma_00(self):
-        return np.std(self.y)
+        return np.var(self.y)
     
     def reset(self):
         self.rho_jkn_dict = dict()

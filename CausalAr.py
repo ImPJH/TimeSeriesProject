@@ -47,38 +47,38 @@ class AR_2D:
             self.h[m] = self.R[(m, 0)] - sum
 
             # beta_m(0)는 항상 -1
-            self.beta[(m,0)] = np.array([[-1]])
-            self.beta[(m,m)] = self.Theta_inv[m] @ self.h[m]
+            self.beta[(m, 0)] = np.array([[-1]])
+            self.beta[(m, m)] = self.Theta_inv[m] @ self.h[m]
 
             for a in range(1, m):
-                self.beta[(m,a)] = (
-                    self.beta[(m - 1,a)] - self.Phi[(m, a, 0)] @ self.beta[(m,m)]
+                self.beta[(m, a)] = (
+                    self.beta[(m - 1, a)] - self.Phi[(m, a, 0)] @ self.beta[(m, m)]
                 )
 
             # lambda는 pdf에 나온 index에서 2를 뺀 index로 사용
             self._lambda[m - 1] = (
-                self._lambda[m - 2] - np.transpose(self.h[m]) @ self.beta[(m,m)]
+                self._lambda[m - 2] - np.transpose(self.h[m]) @ self.beta[(m, m)]
             )
 
             # lambda는 pdf에 나온 index에서 2를 뺀 index로 사용
             # Ssigma는 pdf에 나온 index에서 1을 뺀 index로 사용
             self.Ssigma[m - 1] = self.sigma_00 * self._lambda[m - 1]
 
-            self.Phi[(2,1,m-1)] = self.R11_inv @ self.R[(1,m+1)]
+            self.Phi[(2, 1, m - 1)] = self.R11_inv @ self.R[(1, m + 1)]
 
             for n in range(2, m + 1):
                 sum = 0
                 for a in range(1, n):
                     sum += self.R[(n, a)] @ self.Phi[(n, a, m - n + 1)]
 
-                self.Phi[(n + 1, n,m - n)] = self.Theta_inv[n] @ (
+                self.Phi[(n + 1, n, m - n)] = self.Theta_inv[n] @ (
                     self.R[(n, m + 1)] - sum
                 )
 
                 for a in range(1, n):
-                    self.Phi[(n + 1, a,m - n)] = (
-                        self.Phi[(n, a,m - n + 1)]
-                        - self.Phi[(n, a,0)] @ self.Phi[(n + 1, n,m - n)]
+                    self.Phi[(n + 1, a, m - n)] = (
+                        self.Phi[(n, a, m - n + 1)]
+                        - self.Phi[(n, a, 0)] @ self.Phi[(n + 1, n, m - n)]
                     )
 
         return (self.beta, self.Ssigma)

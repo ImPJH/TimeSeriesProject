@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from CausalAr import AR_2D
 from util import CalBeta
+from Findb import Findb
 
 def test(y):
     size = 16
-    sample = np.random.rand(size*2,size*2) * 255
+    sample = np.random.rand(size*2,size*2)
     # fig = plt.figure()
     # ax = fig.add_subplot(111,projection='3d')
     # ax.scatter(np.arange(128),np.arange(128),sample)
@@ -19,6 +20,11 @@ def test(y):
     ar_2d_model = AR_2D(R,size,sigma_00)
     (beta, Ssigma) = ar_2d_model.run()
     print(beta)
+    print(Ssigma)
+
+
+    
+    
 
 
 if __name__ == '__main__':
