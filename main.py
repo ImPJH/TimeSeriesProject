@@ -2,6 +2,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import cv2
 from CausalAr import AR_2D
 from util import CalBeta
 from Findb import Findb
@@ -12,7 +13,7 @@ def test(y):
     sample = df2.values
     print('residual shape', sample.shape)
 
-    size = 16
+    size = 16 # 16
     # sample = np.random.rand(size*2,size*2) * 255
 
     # fig = plt.figure()
@@ -31,6 +32,10 @@ def test(y):
     # plot AIC, BIC
     ar_2d_model.plot_AIC_BIC(sample)
     plt.show()
+
+    residual_2 = ar_2d_model.get_residual(sample, p=5) # to get residual
+    ar_2d_model.metric(sample, residual_2) # metric
+
 
 
 if __name__ == '__main__':
