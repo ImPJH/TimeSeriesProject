@@ -2,11 +2,19 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import cv2
 from CausalAr import AR_2D
 from util import CalBeta
 from Findb import Findb
 
 def test(y):
+    # Read residual_2.csv
+    df2 = pd.read_csv('source/residual_2.csv', header=None)
+    sample = df2.values
+    print('residual shape', sample.shape)
+
+    size = 16 # 16
+    # sample = np.random.rand(size*2,size*2) * 255
     size = 10
     # sample = np.random.rand(64,64)
 
@@ -36,6 +44,10 @@ def test(y):
 
     noncausal_solver = Findb(y,size,beta,ROS='NSHP')
     noncausal_solver.run()
+
+    residual_2 = ar_2d_model.get_residual(sample, p=5) # to get residual
+    ar_2d_model.metric(sample, residual_2) # metric
+
 
 
 if __name__ == '__main__':

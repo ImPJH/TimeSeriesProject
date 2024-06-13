@@ -1,9 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
+from skimage.metrics import peak_signal_noise_ratio as psnr
+from skimage.metrics import structural_similarity as ssim
 
 # TODO: R을 구하는 코드가 필요
 # Todo2: debugging이 필요
 # Todo3: optimize가 필요
+
+def calculate_psnr(image1, image2):
+    return psnr(image1, image2)
+
+def calculate_ssim(image1, image2):
+    return ssim(image1, image2, data_range=image2.max() - image2.min())
 
 
 class AR_2D:
@@ -89,7 +98,8 @@ class AR_2D:
         # ssigma_ = self.Ssigma[:-1].copy()
         ssigma_ = self.Ssigma[:-1].copy()
         row, col = sample.shape
-        S_m = 2* self.size **2 + 2*self.size
+        size_arr = np.arange(1, self.size)
+        S_m = 2* size_arr **2 + 2*size_arr
         aic = np.log(ssigma_) + 2 / (row*col) * (S_m + 1) # Log e
         bic = np.log(ssigma_) + np.log(row*col) / (row*col) * (S_m + 1) # Log e
         
@@ -97,13 +107,59 @@ class AR_2D:
         
         plt.figure(figsize=(10,6))
         plt.plot(x_, aic, 'o-', label='AIC')
-        plt.plot(x_, bic, 'v-', label='BIC')
+        # plt.plot(x_, bic, 'v-', label='BIC')
         plt.xticks(range(x_[0], x_[-1] + 1))
         plt.xlabel('m')
-        plt.ylabel('AIC/BIC value')
-        plt.title('AIC/BIC TEST')
+        # plt.ylabel('AIC/BIC value')
+        plt.ylabel('AIC value')
+        # plt.title('AIC/BIC TEST')
         plt.legend()
         plt.plot()
+
+
+    ########### RECONSTRUCTION Sampel to get Residual ########
+    def get_residual(self, sample, p=5):
+        p = 5
+        mask = np.zeros((2*p+1,2*p+1))
+        mask[p,p] = -1
+        for i in range(1,p+1):
+            for j in range(4*i):
+                if j < i:
+                    mask[p-j, p-i] = self.beta[(p,i)][j,0]
+                elif i <= j < 3*i:
+                    mask[p-i, p-(2*i-j)] = self.beta[(p,i)][j,0]
+                else:
+                    mask[p-(4*i-j), p-(-i)] = self.beta[(p,i)][j,0]
+        
+        # print(mask)
+        ROW = mask.shape[0]
+
+        rot_mask = np.zeros((2*p+1,2*p+1))
+        for i in range(ROW):
+            for j in range(ROW):
+                rot_mask[ROW-1-i, ROW-1-j]= mask[i,j]
+        # print(rot_mask)
+
+        tot_mask = mask + rot_mask
+        tot_mask[p,p] = -1
+        # print('tot_mask', tot_mask)
+    
+        residual_2 = cv2.filter2D(sample, -1, tot_mask) # (512, 512)
+        # print(residual_2)
+        return residual_2
+    
+    def metric(self, sample, residual_2):
+
+        image1 = sample
+        image2 = residual_2
+
+        psnr_value = calculate_psnr(image1, image2)
+        ssim_value = calculate_ssim(image1, image2)
+
+        print(f'PSNR: {psnr_value}')
+        print(f'SSIM: {ssim_value}')
+        
+
 
 
 
